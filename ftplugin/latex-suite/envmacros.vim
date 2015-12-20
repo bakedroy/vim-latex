@@ -21,7 +21,11 @@ let s:figure_graphicx =    "\\begin{figure}[<+htpb+>]\<cr>\\centering\<cr>\\incl
 let s:minipage =   "\\begin{minipage}[<+tb+>]{<+width+>}\<cr><++>\<cr>\\end{minipage}<++>"
 let s:picture =    "\\begin{picture}(<+width+>, <+height+>)(<+xoff+>,<+yoff+>)\<cr>\\put(<+xoff+>,<+yoff+>){\\framebox(<++>,<++>){<++>}}\<cr>\\end{picture}<++>"
 let s:list =       "\\begin{list}{<+label+>}{<+spacing+>}\<cr>\\item <++>\<cr>\\end{list}<++>"
-let s:table =      "\\begin{table}\<cr>\\centering\<cr>\\begin{tabular}{<+dimensions+>}\<cr><++>\<cr>\\end{tabular}\<cr>\\caption{<+Caption text+>}\<cr>\\label{tab:<+label+>}\<cr>\\end{table}<++>"
+if search('\\documentclass.*{ipsj}', 'bW')
+	let s:table =      "\\begin{table}[<+htpb+>]\<cr>\\centering\<cr>\\caption{<+Caption text+>}\<cr>\\label{tab:<+label+>}\<cr>\\begin{tabular}{<+dimensions+>}\<cr>\\hline \\hline\<cr><++>\<cr>\\hline\<cr>\\end{tabular}\<cr>\\end{table}<++>"
+else
+	let s:table =      "\\begin{table}\<cr>\\centering\<cr>\\begin{tabular}{<+dimensions+>}\<cr><++>\<cr>\\end{tabular}\<cr>\\caption{<+Caption text+>}\<cr>\\label{tab:<+label+>}\<cr>\\end{table}<++>"
+endif
 let s:array =      "\\left<++>\<cr>\\begin{array}{<+dimension+>}\<cr><+elements+>\<cr>\\end{array}\<cr>\\right<++>"
 let s:description ="\\begin{description}\<cr>\\item[<+label+>]<++>\<cr>\\end{description}<++>"
 let s:document =   "\\documentclass[<+options+>]{<+class+>}\<cr>\<cr>\\begin{document}\<cr><++>\<cr>\\end{document}"
@@ -389,8 +393,12 @@ function! Tex_table(env)
 		let ret=ret.'\end{table}<++>'
 		return IMAP_PutTextWithMovement(ret)
 	else
-		return IMAP_PutTextWithMovement(s:table)
-	endif
+		if search('\\documentclass.*{ipsj}', 'bW')
+			let table = "\\begin{table}[<+htpb+>]\<cr>\\centering\<cr>\\caption{<+Caption text+>}\<cr>\\label{tab:<+label+>}\<cr>\\begin{tabular}{<+dimensions+>}\<cr>\\hline \\hline\<cr><++>\<cr>\\hline\<cr>\\end{tabular}\<cr>\\end{table}<++>"
+		else
+			let table = "\\begin{table}\<cr>\\centering\<cr>\\begin{tabular}{<+dimensions+>}\<cr><++>\<cr>\\end{tabular}\<cr>\\caption{<+Caption text+>}\<cr>\\label{tab:<+label+>}\<cr>\\end{table}<++>"
+		endif
+		return IMAP_PutTextWithMovement(table)
 endfunction
 " }}} 
 " Tex_tabular: {{{
